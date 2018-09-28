@@ -3,7 +3,7 @@ import time
 import _thread
 import signal
 import sys
-
+from actuatorDefine import ActuatorAttribute
 flag = -1
 
 
@@ -20,7 +20,6 @@ def init():
 
 
 
-
 def operationCallback(id,type):
    global flag
    flag = type
@@ -29,7 +28,7 @@ def operationCallback(id,type):
        actuatorController.launchAllActuators()
    elif flag == 1 :
        result = actuatorController.getActuatorIdArray()
-       if actuatorController.getActuatorAttribute(result[0], 58) == 1:
+       if actuatorController.getActuatorAttribute(result[0], ActuatorAttribute['ACTUATOR_SWITCH']) == 1:
            # 调整执行器速度环最小电流输出
            actuatorController.setMinOutputCurrent(result[0], -10);
            # 调整执行器速度环最大电流输出
@@ -39,7 +38,7 @@ def operationCallback(id,type):
            # 调整执行器位置环最大速度输出，最大值要大于最小值
            actuatorController.setMaxOutputVelocity(result[0], 2000);
            # 调整执行器Mode_Profile_Pos的最大速度（RPM）
-           actuatorController.setActuatorAttribute(result[0], 26, 1000);
+           actuatorController.setActuatorAttribute(result[0], ActuatorAttribute['PROFILE_POS_MAX_SPEED'], 1000);
 
 
 
@@ -48,23 +47,23 @@ def attrChangeCallback(id,attr,value):
     description = ''
     actualValue = ''
     unitStr = ''
-    if attr == 14 :
+    if attr == ActuatorAttribute['VEL_OUTPUT_LIMITATION_MAXIMUM']  :
         description = "VEL_OUTPUT_LIMITATION_MAXIMUM"
-        actualValue = actuatorController.getActuatorAttribute(id,40)*value
+        actualValue = actuatorController.getActuatorAttribute(id,ActuatorAttribute['CURRENT_SCALE'] )*value
         unitStr = "A"
-    elif attr == 13 :
+    elif attr == ActuatorAttribute['VEL_OUTPUT_LIMITATION_MINIMUM']  :
         description = "VEL_OUTPUT_LIMITATION_MINIMUM"
-        actualValue = actuatorController.getActuatorAttribute(id, 40)*value
+        actualValue = actuatorController.getActuatorAttribute(id, ActuatorAttribute['CURRENT_SCALE'] )*value
         unitStr = "A"
-    elif attr == 21 :
+    elif attr == ActuatorAttribute['POS_OUTPUT_LIMITATION_MAXIMUM'] :
         description = "POS_OUTPUT_LIMITATION_MAXIMUM"
-        actualValue = actuatorController.getActuatorAttribute(id, 41)*value
+        actualValue = actuatorController.getActuatorAttribute(id, ActuatorAttribute['VELOCITY_SCALE'] )*value
         unitStr = "RPM"
-    elif attr == 20 :
+    elif attr == ActuatorAttribute['POS_OUTPUT_LIMITATION_MINIMUM'] :
         description = "POS_OUTPUT_LIMITATION_MINIMUM"
-        actualValue = actuatorController.getActuatorAttribute(id, 41)*value
+        actualValue = actuatorController.getActuatorAttribute(id, ActuatorAttribute['VELOCITY_SCALE'] )*value
         unitStr = "RPM"
-    elif attr == 26 :
+    elif attr == ActuatorAttribute['PROFILE_POS_MAX_SPEED'] :
         description = "PROFILE_POS_MAX_SPEED"
         actualValue = value
         unitStr = "RPM"

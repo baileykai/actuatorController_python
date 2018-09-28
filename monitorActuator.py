@@ -3,6 +3,7 @@ import time
 import _thread
 import signal
 import sys
+from actuatorDefine import OperationFlags
 
 flag = -1
 
@@ -22,7 +23,7 @@ def init():
 def operationCallback(id,type):
    global flag
    flag = type
-   if flag == 0:
+   if flag == OperationFlags['Recognize_Finished']:
        result = actuatorController.getActuatorIdArray()
        print("Number of connected actuators:%d"%(len(result)))
        actuatorController.launchAllActuators()

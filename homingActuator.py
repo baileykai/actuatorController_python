@@ -3,7 +3,7 @@ import time
 import _thread
 import signal
 import sys
-
+from actuatorDefine import ActuatorAttribute
 flag = -1
 bSetLimitation = False;
 
@@ -29,13 +29,12 @@ def operationCallback(id,type):
    elif flag == 1 :
        result = actuatorController.getActuatorIdArray()
        print("Number of connected actuators:%d" % (len(result)))
-       if actuatorController.getActuatorAttribute(result[0], 58) == 1:
+       if actuatorController.getActuatorAttribute(result[0], ActuatorAttribute['ACTUATOR_SWITCH']) == 1:
            global bSetLimitation
-           position = actuatorController.getActuatorAttribute(id, 25)
-           actuatorController.setHomingPosition(id,  actuatorController.getActuatorAttribute(id, 25))
+           actuatorController.setHomingPosition(id,  actuatorController.getActuatorAttribute(id, ActuatorAttribute['ACTUAL_POSITION']))
            actuatorController.setMinPosLimitValue(id, -10)
            actuatorController.setMaxPosLimitValue(id, 10)
-           actuatorController.setActuatorAttribute(id, 35, 0.5)
+           actuatorController.setActuatorAttribute(id, ActuatorAttribute['POS_OFFSET'], 0.5)
            bSetLimitation = True
 
 
@@ -52,15 +51,15 @@ def attrChangeCallback(id,attr,value):
     global min
     global max
     global offset
-    if attr == 24:
+    if attr == ActuatorAttribute['HOMING_POSITION']:
         nResponse = nResponse + 1
-    elif attr == 22 :
+    elif attr == ActuatorAttribute['POS_LIMITATION_MINIMUM'] :
         min = value;
         nResponse = nResponse + 1
-    elif attr == 23 :
+    elif attr == ActuatorAttribute['POS_LIMITATION_MAXIMUM'] :
         max = value;
         nResponse = nResponse + 1
-    elif attr == 35 :
+    elif attr == ActuatorAttribute['POS_OFFSET'] :
         offset = value;
         nResponse = nResponse + 1
 
